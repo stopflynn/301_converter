@@ -70,14 +70,15 @@ def open_endorsements_window():
         # Determine endorsement status
         endorsement_message = "Endorsement Status:\n"
         if achieved_credits >= 50:
-            endorsement_message += "Achieved Endorsement\n"
             endorsement_message = "Endorsement Status:\n"
+            endorsement_message += "Achieved Endorsement\n"
 
         if merit_credits >= 50:
+            endorsement_message = "Endorsement Status:\n"
             endorsement_message += "Merit Endorsement\n"
+
         if excellence_credits >= 50:
             endorsement_message = "Endorsement Status:\n"
-
             endorsement_message += "Excellence Endorsement\n"
 
         # Display endorsement message
