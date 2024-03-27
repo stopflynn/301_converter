@@ -31,7 +31,6 @@ def open_endorsements_window():
     excellence_entry = Entry(frame, font=("Arial", 12), width=10)
     excellence_entry.grid(row=3, column=1, padx=5, pady=5)
 
-    # Function to check endorsements
     def check_endorsements():
         # Get the text from each entry field
         achieved_text = achieved_entry.get()
@@ -47,37 +46,34 @@ def open_endorsements_window():
             messagebox.showerror("Error", "Please enter valid integer values for credits.")
             return
 
-        # Count excellence towards merit and merit towards achieved
+            # Display pie chart
+        labels = 'Achieved', 'Merit', 'Excellence'
+        sizes = [achieved_credits, merit_credits, excellence_credits]
+        plt.pie(sizes, labels=[f'{label}\n({size})' for label, size in zip(labels, sizes)], startangle=140,
+                textprops={'fontsize': 12}, labeldistance=1.1)
+        plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+        plt.title('Endorsement Credits', fontsize=14, fontweight='bold')
+        plt.show()
+
+        # Count excellence towards merit and achieved, and merit towards achieved
         merit_credits += excellence_credits
         achieved_credits += merit_credits
 
         # Determine endorsement status
         endorsement_message = "Endorsement Status:\n"
-        if achieved_credits >= 50:
-            endorsement_message = "Endorsement Status:\n"
-            endorsement_message += "Achieved Endorsement\n"
-
-        if merit_credits >= 50:
-            endorsement_message = "Endorsement Status:\n"
-            endorsement_message += "Merit Endorsement\n"
 
         if excellence_credits >= 50:
-            endorsement_message = "Endorsement Status:\n"
             endorsement_message += "Excellence Endorsement\n"
 
-        # Display endorsement message
-        if endorsement_message == "Endorsement Status:\n":
+        elif merit_credits >= 50:
+            endorsement_message += "Merit Endorsement\n"
+
+        elif achieved_credits >= 50:
+            endorsement_message += "Achieved Endorsement\n"
+
+        else:
             endorsement_message = "No endorsements earned."
         messagebox.showinfo("Endorsement Status", endorsement_message)
-
-        # Display pie chart
-        labels = 'Achieved', 'Merit', 'Excellence'
-        sizes = [achieved_credits, merit_credits, excellence_credits]
-        plt.pie(sizes, labels=labels, autopct='%1.0f%%', startangle=140,
-                textprops={'fontsize': 12}, labeldistance=1.1)
-        plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-        plt.title('Endorsement Credits', fontsize=14, fontweight='bold')
-        plt.show()
 
     # Button to check endorsements
     check_button = Button(frame, text="Check Endorsements", command=check_endorsements, font=("Arial", 12, "bold"))
@@ -166,23 +162,22 @@ class Converter:
     def show_history(self):
         history_window = Toplevel()
         history_window.title("History")
-        history_window.geometry("400x300")
+        history_window.geometry("600x400")
 
-        # Frame to organize history elements
-        history_frame = Frame(history_window, padx=20, pady=10)
-        history_frame.pack(expand=True, fill='both')
-
-        # Title label
-        title_label = Label(history_frame, text="History of Inputs and Feedbacks", font=("Arial", 14, "bold"))
-        title_label.grid(row=0, columnspan=2, pady=(0, 10))
+        # Create Treeview widget
+        tree = ttk.Treeview(history_window)
+        tree['columns'] = ('Input', 'Feedback')
+        tree.heading('#0', text='ID')
+        tree.heading('Input', text='Input')
+        tree.heading('Feedback', text='Feedback')
+        tree.column('#0', width=50)
+        tree.column('Input', width=250)
+        tree.column('Feedback', width=250)
+        tree.pack(expand=True, fill='both')
 
         # Display history
-        for i, entry in enumerate(self.history):
-            Label(history_frame, text=f"Input {i + 1}: {entry['input']}", font=("Arial", 12)).grid(row=i + 1, column=0,
-                                                                                                   sticky='w')
-            Label(history_frame, text=f"Feedback {i + 1}: {entry['feedback']}", font=("Arial", 12)).grid(row=i + 1,
-                                                                                                         column=1,
-                                                                                                         sticky='w')
+        for i, entry in enumerate(self.history, start=1):
+            tree.insert('', 'end', text=str(i), values=(entry['input'], entry['feedback']))
 
     # Function to convert credits
     def convert_credits(self):
@@ -209,12 +204,17 @@ class Converter:
         if credits_needed <= 0:
             # User passed
             excess_credits = abs(credits_needed)
-            self.var_feedback.set(f"Congratulations! You passed at {level} with {excess_credits} excess credits.")
+            feedback = f"Congratulations! You passed at {level} with {excess_credits} excess credits."
         else:
             # User hasn't passed yet
-            self.var_feedback.set(f"You need {credits_needed} more credits to pass at {level}")
+            feedback = f"You need {credits_needed} more credits to pass at {level}"
 
+        self.var_feedback.set(feedback)
         self.output_answer()
+
+        # Record input-feedback pair in history
+        input_data = f"Level: {level}, Credits: {credits}"
+        self.history.append({"input": input_data, "feedback": feedback})
 
     # Endorsements window
     @staticmethod

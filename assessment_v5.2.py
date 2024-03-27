@@ -1,3 +1,4 @@
+# ENDORSEMENT CREDITS ADD UP BUT THE PIE GRAPH IS SPLIT 33% EACH WAY --- BROKEN
 from tkinter import *
 import tkinter as tk
 from tkinter import ttk
@@ -31,6 +32,7 @@ def open_endorsements_window():
     excellence_entry = Entry(frame, font=("Arial", 12), width=10)
     excellence_entry.grid(row=3, column=1, padx=5, pady=5)
 
+    # Function to check endorsements
     def check_endorsements():
         # Get the text from each entry field
         achieved_text = achieved_entry.get()
@@ -46,26 +48,33 @@ def open_endorsements_window():
             messagebox.showerror("Error", "Please enter valid integer values for credits.")
             return
 
-        # Display endorsement message
-        endorsement_message = ""
+        # Count excellence towards merit and merit towards achieved
+        merit_credits += excellence_credits
+        achieved_credits += merit_credits
+
+        # Determine endorsement status
+        endorsement_message = "Endorsement Status:\n"
         if achieved_credits >= 50:
+            endorsement_message = "Endorsement Status:\n"
             endorsement_message += "Achieved Endorsement\n"
 
         if merit_credits >= 50:
+            endorsement_message = "Endorsement Status:\n"
             endorsement_message += "Merit Endorsement\n"
 
         if excellence_credits >= 50:
+            endorsement_message = "Endorsement Status:\n"
             endorsement_message += "Excellence Endorsement\n"
 
-        # If none of the endorsements are earned
-        if not endorsement_message:
+        # Display endorsement message
+        if endorsement_message == "Endorsement Status:\n":
             endorsement_message = "No endorsements earned."
         messagebox.showinfo("Endorsement Status", endorsement_message)
 
-        # Display pie chart with the number of credits
+        # Display pie chart
         labels = 'Achieved', 'Merit', 'Excellence'
         sizes = [achieved_credits, merit_credits, excellence_credits]
-        plt.pie(sizes, labels=labels, autopct='%1.0f', startangle=140,
+        plt.pie(sizes, labels=labels, autopct='%1.0f%%', startangle=140,
                 textprops={'fontsize': 12}, labeldistance=1.1)
         plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
         plt.title('Endorsement Credits', fontsize=14, fontweight='bold')
