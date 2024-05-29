@@ -52,7 +52,8 @@ def open_endorsements_window():
         plt.pie(sizes, labels=[f'{label}\n({size})' for label, size in zip(labels, sizes)], startangle=140,
                 textprops={'fontsize': 12}, labeldistance=1.1)
         plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-        plt.title('Endorsement Credits', fontsize=14, fontweight='bold')
+        plt.title('Endorsement Credits - press x to continue', fontsize=14, fontweight='bold')
+
         plt.show()
 
         # Count excellence towards merit and achieved, and merit towards achieved
@@ -61,16 +62,12 @@ def open_endorsements_window():
 
         # Determine endorsement status
         endorsement_message = "Endorsement Status:\n"
-
         if excellence_credits >= 50:
             endorsement_message += "Excellence Endorsement\n"
-
         elif merit_credits >= 50:
             endorsement_message += "Merit Endorsement\n"
-
         elif achieved_credits >= 50:
             endorsement_message += "Achieved Endorsement\n"
-
         else:
             endorsement_message = "No endorsements earned."
         messagebox.showinfo("Endorsement Status", endorsement_message)
@@ -117,8 +114,6 @@ class Converter:
         # Buttons frame
         buttons_frame = Frame(self.temp_frame)
         buttons_frame.grid(row=4, column=0, columnspan=2, pady=10)
-
-        # MAKE CONVERT BUTTON BIGGER
 
         # Convert button
         self.convert_button = Button(self.temp_frame,
@@ -269,9 +264,6 @@ class Converter:
 
             if not endorsement_message:
                 endorsement_message = "No endorsements earned."
-
-            # Display endorsement message
-            messagebox.showinfo("Endorsement Status", endorsement_message)
 
             # Display endorsement message
             messagebox.showinfo("Endorsement Status", endorsement_message)
